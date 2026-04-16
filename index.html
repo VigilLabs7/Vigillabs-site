@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vigil Labs — Canonical Engineering</title>
+<meta name="description" content="A frontier research laboratory engineering the canonical substrate of intelligent systems." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg-deep: #06070a;
+    --panel: #0f1218;
+    --rule: #1c2028;
+    --rule-soft: #14171d;
+    --text: #e7e4dc;
+    --text-dim: #8a8679;
+    --text-faint: #4a4740;
+    --ember: #ff6b2b;
+    --ember-deep: #c2411a;
+    --ember-glow: rgba(255, 107, 43, 0.18);
+    --cyan: #4de3d1;
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--bg-deep); }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.55;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+    font-feature-settings: "ss01", "ss02", "cv01";
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode: overlay;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 199;
+    background: radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(0,0,0,0.45) 100%);
+  }
+
+  .page { position: relative; z-index: 2; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 0 clamp(20px, 4vw, 56px); }
+
+  ::selection { background: var(--ember); color: var(--bg-deep); }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 12, 16, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px clamp(20px, 4vw, 56px);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .topbar .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 500; }
+  .topbar .brand-glyph { width: 14px; height: 14px; position: relative; }
+  .topbar .brand-glyph::before {
+    content: ""; position: absolute; inset: 0; border: 1px solid var(--ember); border-radius: 50%;
+  }
+  .topbar .brand-glyph::after {
+    content: ""; position: absolute; inset: 4px;
+    background: var(--ember);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--ember-glow);
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+
+  .topbar .status { display: flex; gap: 28px; align-items: center; }
+  .topbar .status-item { display: flex; gap: 8px; align-items: center; }
+  .topbar .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--cyan); box-shadow: 0 0 6px var(--cyan);
+  }
+
+  .hero {
+    position: relative;
+    min-height: calc(100vh - 48px);
+    display: flex;
+    align-items: center;
+    padding: 80px 0 120px;
+    overflow: hidden;
+  }
+  .field { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .field canvas { width: 100%; height: 100%; display: block; opacity: 0.7; }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: slideIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
+  }
+  .hero-eyebrow .tag {
+    padding: 3px 8px;
+    border: 1px solid var(--ember);
+    color: var(--ember);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(56px, 9.5vw, 148px);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: slideUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s forwards;
+  }
+  .hero-title .t2 {
+    display: block;
+    font-style: italic;
+    font-weight: 200;
+    color: var(--text-dim);
+    letter-spacing: -0.04em;
+  }
+  .hero-title .caret {
+    color: var(--ember);
+    font-style: normal;
+    font-weight: 400;
+    animation: blink 1.1s steps(2) infinite;
+  }
+  @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+  .hero-lede {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(19px, 1.8vw, 24px);
+    line-height: 1.45;
+    color: var(--text);
+    max-width: 42ch;
+    opacity: 0;
+    animation: slideUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.65s forwards;
+  }
+  .hero-lede em { color: var(--ember); font-style: italic; }
+
+  .instrument {
+    opacity: 0;
+    animation: fadeIn 1.6s ease-out 0.9s forwards;
+    background: linear-gradient(180deg, rgba(15, 18, 24, 0.6), rgba(15, 18, 24, 0.9));
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 24px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .instrument-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 18px;
+  }
+  .instrument-header .live { display: flex; align-items: center; gap: 8px; color: var(--cyan); }
+  .instrument-header .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--cyan); animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  .instrument-rows { display: flex; flex-direction: column; gap: 12px; }
+  .instrument-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 52px;
+    gap: 12px;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text);
+  }
+  .instrument-row .k {
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+  .instrument-row .bar {
+    height: 4px;
+    background: var(--rule);
+    position: relative;
+    overflow: hidden;
+    border-radius: 1px;
+  }
+  .instrument-row .bar span {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--ember-deep), var(--ember));
+    box-shadow: 0 0 8px var(--ember-glow);
+    transition: width 0.8s ease;
+  }
+  .instrument-row .v {
+    font-variant-numeric: tabular-nums;
+    color: var(--ember);
+    font-size: 11px;
+    text-align: right;
+  }
+  .instrument-foot {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  section { position: relative; padding: 140px 0; border-top: 1px solid var(--rule); }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 48px;
+  }
+  .section-label .num { color: var(--ember); font-weight: 500; }
+  .section-label::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--rule), transparent);
+  }
+
+  .thesis-grid { display: grid; grid-template-columns: 1fr; gap: 56px; }
+  @media (min-width: 960px) {
+    .thesis-grid { grid-template-columns: 0.4fr 0.6fr; gap: 96px; }
+  }
+  .thesis-heading {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--text);
+  }
+  .thesis-heading em { font-style: italic; color: var(--ember); font-weight: 200; }
+
+  .thesis-body {
+    font-family: var(--serif);
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--text);
+    max-width: 58ch;
+  }
+  .thesis-body p + p { margin-top: 20px; }
+  .thesis-body strong {
+    color: var(--text);
+    font-weight: 500;
+    background: linear-gradient(transparent 60%, var(--ember-glow) 60%);
+    padding: 0 2px;
+  }
+  .thesis-body .quiet { color: var(--text-dim); font-style: italic; }
+
+  .programs-intro {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(28px, 3.6vw, 46px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    max-width: 22ch;
+    margin-bottom: 72px;
+  }
+  .programs-intro em { font-style: italic; color: var(--ember); }
+
+  .program-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
+
+  .program {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 40px 0;
+    border-top: 1px solid var(--rule);
+    position: relative;
+    transition: background 0.4s ease;
+  }
+  @media (min-width: 960px) {
+    .program { grid-template-columns: 80px 0.4fr 0.6fr; gap: 56px; padding: 56px 0; align-items: start; }
+  }
+  .program:last-child { border-bottom: 1px solid var(--rule); }
+  .program::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: 0;
+    width: 0; height: 1px;
+    background: var(--ember);
+    box-shadow: 0 0 8px var(--ember);
+    transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .program:hover::before { width: 100%; }
+  .program:hover .program-title { color: var(--ember); }
+
+  .program-index {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ember);
+    padding-top: 6px;
+  }
+
+  .program-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(24px, 2.4vw, 32px);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--text);
+    transition: color 0.4s ease;
+  }
+  .program-title em { font-style: italic; font-weight: 300; color: var(--text-dim); }
+
+  .program-body {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    max-width: 54ch;
+  }
+
+  .program-tags { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-chip {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border: 1px solid var(--rule);
+    color: var(--text-faint);
+  }
+
+  .trajectory {
+    padding: 100px 0;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at center, rgba(255, 107, 43, 0.04) 0%, transparent 60%),
+      var(--bg);
+  }
+  .trajectory-statement {
+    font-family: var(--serif);
+    font-weight: 200;
+    font-style: italic;
+    font-size: clamp(30px, 4.2vw, 58px);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    max-width: 22ch;
+    margin: 0 auto;
+  }
+  .trajectory-statement .accent { color: var(--ember); font-style: normal; font-weight: 300; }
+
+  .trajectory-footnote {
+    margin-top: 36px;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* Sigil above the working principle */
+  .sigil-mark {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 32px;
+    opacity: 1;
+    filter: drop-shadow(0 0 24px rgba(255, 107, 43, 0.28));
+  }
+  .sigil-mark svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .sigil-ring-outer {
+    transform-origin: 200px 200px;
+    animation: sigil-rotate 180s linear infinite;
+  }
+  .sigil-ring-inner {
+    transform-origin: 200px 200px;
+    animation: sigil-rotate-rev 120s linear infinite;
+  }
+  .sigil-pupil {
+    transform-origin: 200px 200px;
+    animation: sigil-breathe 4s ease-in-out infinite;
+  }
+  @keyframes sigil-rotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes sigil-rotate-rev {
+    from { transform: rotate(360deg); }
+    to   { transform: rotate(0deg); }
+  }
+  @keyframes sigil-breathe {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50%      { opacity: 1; transform: scale(1.04); }
+  }
+
+  .contact { padding: 140px 0; }
+  .contact-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
+  @media (min-width: 960px) {
+    .contact-grid { grid-template-columns: 1fr 1fr 1fr; gap: 64px; }
+  }
+  .contact-cell h4 {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ember);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .contact-cell p {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .contact-cell a {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .contact-cell a:hover { color: var(--ember); border-color: var(--ember); }
+  .contact-cell a .arrow { transition: transform 0.3s ease; }
+  .contact-cell a:hover .arrow { transform: translateX(4px); }
+
+  footer {
+    padding: 24px 0 40px;
+    border-top: 1px solid var(--rule);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-mark { display: flex; align-items: center; gap: 10px; color: var(--text-dim); }
+  .footer-mark-dot {
+    width: 5px; height: 5px;
+    background: var(--ember);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--ember);
+    animation: breathe 3s ease-in-out infinite;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .field { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .topbar .status-item:not(:last-child) { display: none; }
+    section { padding: 100px 0; }
+    .trajectory, .contact { padding: 120px 0; }
+    .hero { padding: 60px 0 100px; }
+    .instrument-row { grid-template-columns: 84px 1fr 48px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-glyph"></span>
+        <span>VIGIL LABS</span>
+      </div>
+      <div class="status">
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="field">
+      <canvas id="canonical-field"></canvas>
+    </div>
+
+    <div class="wrap hero-content">
+      <div>
+        <div class="hero-eyebrow">
+          <span class="tag">Canonical Science</span>
+          <span class="tag">Canonical Engineering</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span>Vigil Labs</span>
+          <span class="t2">a new substrate</span>
+        </h1>
+
+        <p class="hero-lede">
+          We build the faculties intelligent systems will need to <em>hold together</em> &mdash; memory, agreement, and trust between minds that are not human.
+        </p>
+      </div>
+
+
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap">
+      <div class="section-label"><span class="num">&sect; 01</span><span>What We Do</span></div>
+
+      <div class="thesis-grid">
+        <h2 class="thesis-heading">Faculties for <em>intelligent systems</em>.</h2>
+
+        <div class="thesis-body">
+          <p>
+            We give intelligent systems the things they currently lack: durable memory across instances, honest agreement about what has happened, and the capacity to coordinate with one another without being commanded.
+          </p>
+          <p>
+            These are not features. They are the <strong>faculties</strong> by which any community of minds &mdash; human or otherwise &mdash; comes to hold together over time.
+          </p>
+          <p>
+            Our work is quiet, patient, and unusually long-horizoned. <span class="quiet">Some of what we are pursuing is not expected to matter for years.</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="wrap">
+      <div class="section-label"><span class="num">&sect; 02</span><span>What We Enable</span></div>
+
+      <h2 class="programs-intro">Four <em>capabilities</em>, one laboratory.</h2>
+
+      <div class="program-grid">
+
+        <article class="program">
+          <div class="program-index">01 / 04</div>
+          <h3 class="program-title">Memory that <em>persists</em></h3>
+          <div>
+            <p class="program-body">
+              Intelligent systems that remember across instances, sessions, and time &mdash; not as stored text, but as lived continuity.
+            </p>
+          </div>
+        </article>
+
+        <article class="program">
+          <div class="program-index">02 / 04</div>
+          <h3 class="program-title">Agreement without <em>authority</em></h3>
+          <div>
+            <p class="program-body">
+              Intelligent systems that can converge on what has happened without anyone above them declaring it so.
+            </p>
+          </div>
+        </article>
+
+        <article class="program">
+          <div class="program-index">03 / 04</div>
+          <h3 class="program-title">Coordination between <em>minds</em></h3>
+          <div>
+            <p class="program-body">
+              Trust, delegation, and shared work among intelligent agents &mdash; including the ones that are not human.
+            </p>
+          </div>
+        </article>
+
+        <article class="program">
+          <div class="program-index">04 / 04</div>
+          <h3 class="program-title">Foundations that <em>hold</em></h3>
+          <div>
+            <p class="program-body">
+              The hard infrastructure work beneath all of the above: agent security, computer architecture, and the safety of systems designed to act on behalf of others.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="trajectory reveal">
+    <div class="wrap">
+      <div class="section-label trajectory-label"><span class="num">&sect; 03</span><span>Trajectory</span></div>
+
+      <div class="sigil-mark" aria-hidden="true">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sigil-pupil" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ff6b2b" stop-opacity="1"/>
+              <stop offset="70%" stop-color="#c2411a" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0a0c10" stop-opacity="1"/>
+            </radialGradient>
+          </defs>
+
+          <!-- outer tick ring, slow rotation -->
+          <g class="sigil-ring-outer">
+            <circle cx="200" cy="200" r="190" fill="none" stroke="#c9c4b5" stroke-width="1.2" opacity="0.75"/>
+            <g stroke="#c9c4b5" stroke-width="1.2" opacity="0.85">
+              <line x1="200" y1="10" x2="200" y2="22"/>
+              <line x1="200" y1="378" x2="200" y2="390"/>
+              <line x1="10" y1="200" x2="22" y2="200"/>
+              <line x1="378" y1="200" x2="390" y2="200"/>
+              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(45 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(135 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(225 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(315 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(30 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(60 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(120 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(150 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(210 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(240 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(300 200 200)"/>
+              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(330 200 200)"/>
+            </g>
+          </g>
+
+          <!-- dashed middle ring -->
+          <circle cx="200" cy="200" r="165" fill="none" stroke="#c9c4b5" stroke-width="0.9" stroke-dasharray="2 6" opacity="0.6"/>
+
+          <!-- inner ring, counter-rotating -->
+          <g class="sigil-ring-inner">
+            <circle cx="200" cy="200" r="140" fill="none" stroke="#c9c4b5" stroke-width="0.9" opacity="0.65"/>
+            <g fill="#ff6b2b" opacity="0.9">
+              <circle cx="200" cy="60" r="3"/>
+              <circle cx="340" cy="200" r="3"/>
+              <circle cx="200" cy="340" r="3"/>
+              <circle cx="60" cy="200" r="3"/>
+            </g>
+          </g>
+
+          <!-- vesica almond outline -->
+          <path d="M 60 200 Q 200 80, 340 200 Q 200 320, 60 200 Z"
+                fill="none" stroke="#e7e4dc" stroke-width="2.2" opacity="1"/>
+
+          <!-- inner almond, filled with page color -->
+          <path d="M 85 200 Q 200 115, 315 200 Q 200 285, 85 200 Z"
+                fill="#0a0c10" stroke="#e7e4dc" stroke-width="0.9" opacity="1"/>
+
+          <!-- iris detail rings -->
+          <circle cx="200" cy="200" r="58" fill="none" stroke="#e7e4dc" stroke-width="1.2" opacity="0.85"/>
+          <circle cx="200" cy="200" r="48" fill="none" stroke="#e7e4dc" stroke-width="0.5" opacity="0.5"/>
+          <circle cx="200" cy="200" r="38" fill="none" stroke="#e7e4dc" stroke-width="0.5" opacity="0.4"/>
+
+          <!-- pupil -->
+          <g class="sigil-pupil">
+            <circle cx="200" cy="200" r="28" fill="url(#sigil-pupil)"/>
+            <circle cx="200" cy="200" r="28" fill="none" stroke="#ff6b2b" stroke-width="1" opacity="0.7"/>
+          </g>
+
+          <!-- catchlight -->
+          <circle cx="192" cy="192" r="4" fill="#f4f1e8" opacity="1"/>
+        </svg>
+      </div>
+
+      <p class="trajectory-statement">
+        What is observed often enough <span class="accent">becomes what is</span>.
+      </p>
+
+      <div class="trajectory-footnote">Working Principle &middot; Vigil Labs</div>
+    </div>
+  </section>
+
+  <section class="contact reveal">
+    <div class="wrap">
+      <div class="section-label"><span class="num">&sect; 04</span><span>Correspondence</span></div>
+
+      <div class="contact-grid">
+
+        <div class="contact-cell">
+          <h4>Inquiry</h4>
+          <p>Brevity is welcome. Substance is weighted.</p>
+          <a href="mailto:correspondence@vigillabs.tech">
+            correspondence@vigillabs.tech
+            <span class="arrow">&rarr;</span>
+          </a>
+        </div>
+
+        <div class="contact-cell">
+          <h4>Working Papers</h4>
+          <p>Findings are published as versioned documents when they reach a state that warrants the permanence.</p>
+          <a href="#">
+            published via git
+            <span class="arrow">&rarr;</span>
+          </a>
+        </div>
+
+        <div class="contact-cell">
+          <h4>On the Name</h4>
+          <p>A vigil is patient observation held across a long night. The laboratory is named for the posture, not the outcome.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <div class="footer-mark">
+        <span class="footer-mark-dot"></span>
+        <span>Vigil Labs &middot; 2026</span>
+      </div>
+      <div>vigillabs.tech</div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  /* CANONICAL FIELD — live instrument behind the hero.
+     Observers drift; close pairs accumulate precedent on the edge between them;
+     edges shift from cyan (transient observation) to ember (established canon);
+     without renewed observation, precedent decays back into the dark. */
+  (function () {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+
+    const canvas = document.getElementById('canonical-field');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    let W = 0, H = 0;
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    let nodes = [];
+    let edges = new Map();
+
+    function resize() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      seed();
+    }
+
+    function seed() {
+      const n = Math.max(28, Math.min(64, Math.floor((W * H) / 22000)));
+      nodes = [];
+      for (let i = 0; i < n; i++) {
+        nodes.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.18,
+          vy: (Math.random() - 0.5) * 0.18,
+          r: 0.9 + Math.random() * 1.4,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+      edges = new Map();
+    }
+
+    function step() {
+      for (const n of nodes) {
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+        n.phase += 0.01;
+      }
+
+      const maxDist = 180;
+      const maxDist2 = maxDist * maxDist;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const a = nodes[i], b = nodes[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < maxDist2) {
+            const key = i + '-' + j;
+            const cur = edges.get(key) || 0;
+            const gain = (1 - Math.sqrt(d2) / maxDist) * 0.015;
+            edges.set(key, Math.min(1, cur + gain));
+          }
+        }
+      }
+
+      edges.forEach((v, k) => {
+        const next = v - 0.0025;
+        if (next <= 0) edges.delete(k);
+        else edges.set(k, next);
+      });
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(10, 12, 16, 0.18)';
+      ctx.fillRect(0, 0, W, H);
+
+      edges.forEach((w, key) => {
+        const parts = key.split('-');
+        const i = +parts[0], j = +parts[1];
+        const a = nodes[i], b = nodes[j];
+        if (!a || !b) return;
+        if (w < 0.08) return;
+
+        const alpha = Math.min(0.55, w * 0.8);
+        const t = Math.min(1, w);
+        const r = Math.round(77 + (255 - 77) * t);
+        const g = Math.round(227 + (107 - 227) * t);
+        const bl = Math.round(209 + (43 - 209) * t);
+
+        ctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + bl + ',' + alpha + ')';
+        ctx.lineWidth = 0.4 + w * 0.9;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      });
+
+      for (const n of nodes) {
+        const pulse = 0.75 + Math.sin(n.phase) * 0.25;
+        ctx.fillStyle = 'rgba(255, 107, 43, ' + (0.35 * pulse) + ')';
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * 2.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(231, 228, 220, ' + (0.85 * pulse) + ')';
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function loop() {
+      step();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
+    resize();
+    ctx.fillStyle = '#0a0c10';
+    ctx.fillRect(0, 0, W, H);
+    loop();
+  })();
+
+  /* Scroll reveal */
+  const io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+</script>
+
+</body>
+</html>
