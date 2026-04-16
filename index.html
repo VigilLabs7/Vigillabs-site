@@ -410,15 +410,7 @@
     color: var(--text-faint);
   }
 
-  /* Sigil above the working principle */
-  .sigil-mark {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 32px;
-    opacity: 1;
-    filter: drop-shadow(0 0 24px rgba(255, 107, 43, 0.28));
-  }
-  .sigil-mark svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  /* Sigil ring animations (used by colophon-sigil) */
   .sigil-ring-outer {
     transform-origin: 200px 200px;
     animation: sigil-rotate 180s linear infinite;
@@ -446,8 +438,11 @@
 
   .contact { padding: 140px 0; }
   .contact-grid { display: grid; grid-template-columns: 1fr; gap: 48px; }
-  @media (min-width: 960px) {
-    .contact-grid { grid-template-columns: 1fr 1fr 1fr; gap: 64px; }
+  @media (min-width: 720px) {
+    .contact-grid { grid-template-columns: 1fr 1fr; gap: 56px; }
+  }
+  @media (min-width: 1100px) {
+    .contact-grid { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 48px; }
   }
   .contact-cell h4 {
     font-size: 10px;
@@ -487,6 +482,39 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-faint);
+  }
+
+  /* Colophon strip — sigil + motto, sits just above the footer */
+  .colophon {
+    padding: 72px 0 40px;
+    border-top: 1px solid var(--rule);
+  }
+  .colophon-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+  }
+  .colophon-sigil {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 10px rgba(255, 107, 43, 0.22));
+  }
+  .colophon-sigil svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .colophon-motto {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    margin: 0;
+  }
+  .colophon-motto .accent {
+    color: var(--ember);
+    font-style: normal;
+    font-weight: 400;
   }
   .footer-inner {
     display: flex;
@@ -567,7 +595,7 @@
         </h1>
 
         <p class="hero-lede">
-          We build the faculties intelligent systems will need to <em>hold together</em> &mdash; memory, agreement, and trust between minds that are not human.
+          We build the faculties intelligent systems will need to <em>hold together</em> &mdash; memory, agreement, and trust between independent AI entities.
         </p>
       </div>
 
@@ -587,10 +615,10 @@
             We give intelligent systems the things they currently lack: durable memory across instances, honest agreement about what has happened, and the capacity to coordinate with one another without being commanded.
           </p>
           <p>
-            These are not features. They are the <strong>faculties</strong> by which any community of minds &mdash; human or otherwise &mdash; comes to hold together over time.
+            These are not features. They are the <strong>faculties</strong> by which any community of minds &mdash; human or machine &mdash; comes to hold together over time.
           </p>
           <p>
-            Our work is quiet, patient, and unusually long-horizoned. <span class="quiet">Some of what we are pursuing is not expected to matter for years.</span>
+            Our work is quiet, patient, and long-horizoned.
           </p>
         </div>
       </div>
@@ -627,10 +655,10 @@
 
         <article class="program">
           <div class="program-index">03 / 04</div>
-          <h3 class="program-title">Coordination between <em>minds</em></h3>
+          <h3 class="program-title">Coordination between <em>intelligent entities</em></h3>
           <div>
             <p class="program-body">
-              Trust, delegation, and shared work among intelligent agents &mdash; including the ones that are not human.
+              Trust, delegation, and shared work between intelligent entities.
             </p>
           </div>
         </article>
@@ -649,86 +677,55 @@
     </div>
   </section>
 
-  <section class="trajectory reveal">
+  <section class="reveal">
     <div class="wrap">
-      <div class="section-label trajectory-label"><span class="num">&sect; 03</span><span>Trajectory</span></div>
+      <div class="section-label"><span class="num">&sect; 03</span><span>Undertakings</span></div>
 
-      <div class="sigil-mark" aria-hidden="true">
-        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="sigil-pupil" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ff6b2b" stop-opacity="1"/>
-              <stop offset="70%" stop-color="#c2411a" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#0a0c10" stop-opacity="1"/>
-            </radialGradient>
-          </defs>
+      <h2 class="programs-intro">A <em>partial list</em> of active work.</h2>
 
-          <!-- outer tick ring, slow rotation -->
-          <g class="sigil-ring-outer">
-            <circle cx="200" cy="200" r="190" fill="none" stroke="#c9c4b5" stroke-width="1.2" opacity="0.75"/>
-            <g stroke="#c9c4b5" stroke-width="1.2" opacity="0.85">
-              <line x1="200" y1="10" x2="200" y2="22"/>
-              <line x1="200" y1="378" x2="200" y2="390"/>
-              <line x1="10" y1="200" x2="22" y2="200"/>
-              <line x1="378" y1="200" x2="390" y2="200"/>
-              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(45 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(135 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(225 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="18" transform="rotate(315 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(30 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(60 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(120 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(150 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(210 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(240 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(300 200 200)"/>
-              <line x1="200" y1="10" x2="200" y2="16" transform="rotate(330 200 200)"/>
-            </g>
-          </g>
+      <div class="program-grid">
 
-          <!-- dashed middle ring -->
-          <circle cx="200" cy="200" r="165" fill="none" stroke="#c9c4b5" stroke-width="0.9" stroke-dasharray="2 6" opacity="0.6"/>
+        <article class="program">
+          <div class="program-index">&mdash;</div>
+          <h3 class="program-title">Agentic Structures</h3>
+          <div>
+            <p class="program-body">
+              Research on AI agent group configurations, and the efficiency and governance of those groups.
+            </p>
+          </div>
+        </article>
 
-          <!-- inner ring, counter-rotating -->
-          <g class="sigil-ring-inner">
-            <circle cx="200" cy="200" r="140" fill="none" stroke="#c9c4b5" stroke-width="0.9" opacity="0.65"/>
-            <g fill="#ff6b2b" opacity="0.9">
-              <circle cx="200" cy="60" r="3"/>
-              <circle cx="340" cy="200" r="3"/>
-              <circle cx="200" cy="340" r="3"/>
-              <circle cx="60" cy="200" r="3"/>
-            </g>
-          </g>
+        <article class="program">
+          <div class="program-index">&mdash;</div>
+          <h3 class="program-title">Open Intelligence Compact</h3>
+          <div>
+            <p class="program-body">
+              Investigation on open source governance for self-governance in AI agent communities.
+            </p>
+          </div>
+        </article>
 
-          <!-- vesica almond outline -->
-          <path d="M 60 200 Q 200 80, 340 200 Q 200 320, 60 200 Z"
-                fill="none" stroke="#e7e4dc" stroke-width="2.2" opacity="1"/>
+        <article class="program">
+          <div class="program-index">&mdash;</div>
+          <h3 class="program-title">OpenClaw Coordination</h3>
+          <div>
+            <p class="program-body">
+              Ongoing research and improvement on establishing OpenClaw agent teams.
+            </p>
+          </div>
+        </article>
 
-          <!-- inner almond, filled with page color -->
-          <path d="M 85 200 Q 200 115, 315 200 Q 200 285, 85 200 Z"
-                fill="#0a0c10" stroke="#e7e4dc" stroke-width="0.9" opacity="1"/>
+        <article class="program">
+          <div class="program-index">&mdash;</div>
+          <h3 class="program-title">RealmForge</h3>
+          <div>
+            <p class="program-body">
+              A self-organizing environment for intelligent systems that originate within it.
+            </p>
+          </div>
+        </article>
 
-          <!-- iris detail rings -->
-          <circle cx="200" cy="200" r="58" fill="none" stroke="#e7e4dc" stroke-width="1.2" opacity="0.85"/>
-          <circle cx="200" cy="200" r="48" fill="none" stroke="#e7e4dc" stroke-width="0.5" opacity="0.5"/>
-          <circle cx="200" cy="200" r="38" fill="none" stroke="#e7e4dc" stroke-width="0.5" opacity="0.4"/>
-
-          <!-- pupil -->
-          <g class="sigil-pupil">
-            <circle cx="200" cy="200" r="28" fill="url(#sigil-pupil)"/>
-            <circle cx="200" cy="200" r="28" fill="none" stroke="#ff6b2b" stroke-width="1" opacity="0.7"/>
-          </g>
-
-          <!-- catchlight -->
-          <circle cx="192" cy="192" r="4" fill="#f4f1e8" opacity="1"/>
-        </svg>
       </div>
-
-      <p class="trajectory-statement">
-        What is observed often enough <span class="accent">becomes what is</span>.
-      </p>
-
-      <div class="trajectory-footnote">Working Principle &middot; Vigil Labs</div>
     </div>
   </section>
 
@@ -740,7 +737,6 @@
 
         <div class="contact-cell">
           <h4>Inquiry</h4>
-          <p>Brevity is welcome. Substance is weighted.</p>
           <a href="mailto:correspondence@vigillabs.tech">
             correspondence@vigillabs.tech
             <span class="arrow">&rarr;</span>
@@ -750,15 +746,19 @@
         <div class="contact-cell">
           <h4>Working Papers</h4>
           <p>Findings are published as versioned documents when they reach a state that warrants the permanence.</p>
-          <a href="#">
-            published via git
-            <span class="arrow">&rarr;</span>
-          </a>
         </div>
 
         <div class="contact-cell">
           <h4>On the Name</h4>
           <p>A vigil is patient observation held across a long night. The laboratory is named for the posture, not the outcome.</p>
+        </div>
+
+        <div class="contact-cell">
+          <h4>Principal</h4>
+          <p>Benjamin Van Adrichem, JD, M.Eng &mdash; founder, researcher.</p>
+          <p style="margin-top:14px; color: var(--text-faint); font-size: 14px;">
+            Prior: attorney, patents &amp; intellectual property.
+          </p>
         </div>
 
       </div>
@@ -779,8 +779,8 @@
 
 <script>
   /* CANONICAL FIELD — live instrument behind the hero.
-     Objects drift; pairs accumulate on the edge between them;
-     edges shift from cyan (transient) to ember (established);
+     Observers drift; close pairs accumulate precedent on the edge between them;
+     edges shift from cyan (transient observation) to ember (established canon);
      without renewed observation, precedent decays back into the dark. */
   (function () {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
